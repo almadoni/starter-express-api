@@ -39,7 +39,12 @@ app.use(
 
 app.use('/assets',express.static(__dirname + '/public'));
 
-app.get('/', (req, res) => {
+app.all('/', (req, res) => {  
+    console.log("Just got a request!")
+    res.send('Yo!.. ini baru di update aja yaaa...')
+})
+
+app.get('/main', (req, res) => {
    
 var dateFormat = require("dateformat");
 var now = new Date(); 

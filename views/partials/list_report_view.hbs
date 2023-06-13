@@ -1,0 +1,76 @@
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>Mobile Learning</title>
+ 
+  <link rel="stylesheet" href="/assets/css/bootstrap.min.css"> 
+  <link rel="stylesheet" href="/assets/css/jquery-ui.css"> 
+  <link rel="stylesheet" href="/assets/css/loadingModal.css"> 
+   
+</head>
+<body>
+  
+  <div class="container-fluid">
+
+   <h3>Laporan Hasil Kuis</h3>
+  
+  
+	<div class="row">
+
+	    <table class="table table-striped table-hover" id="mytable" >
+	      <thead>
+	        <tr>          
+	          <th>ID</th> 
+	          <th>Name</th>
+	          <th>Materi</th>
+	          <th>Score</th>                    
+	          <th>Tanggal Buat</th>  
+		{{#if is_admin}}
+	            <th>Action</th>
+	          {{/if}}   
+	          
+	        </tr>
+	      </thead>
+	      <tbody id="bodytable">
+	         {{#each data}}          
+	        <tr>
+	          <td>{{id}}</td> 
+	          <td><a href="list_user/detail?id={{id}}"> {{fullname}} </a></td>  
+	          <td>{{materi}}</td>
+	          <td>{{score}}</td>
+		  <td>{{create_date}}</td>                  
+	          {{#if is_admin}}
+	          <td>  
+	            <a href="javascript:void(0);" class="btn btn-sm btn-info edit" data-id="{{id}}" 
+	            data-name="{{name}}" data-code="{{code}}" data-parent_id="{{parent_id}}">Edit</a>
+	            <a href="javascript:void(0);" class="btn btn-sm btn-danger delete" data-id="{{id}}" data-name="{{name}}" >Delete</a> 
+	          </td>
+	          {{/if}}
+	        </tr>
+	        {{/each}}
+	      </tbody>
+	    </table>
+	</div>
+ 
+  	<div class="row" style="padding-bottom: 40px">
+  		<div class="col-sm-2">
+  			Total Page : <b id="totalPage">{{total_page}}</b>	 
+  		</div>
+  		<div class="col-sm-2">
+  			
+  		</div>
+  		<div class="col-sm-6">
+  			<ul id="pagination" class="pagination"/> 
+  		</div>
+  	</div>
+    
+    
+  </div>
+ 
+  
+
+
+</body>
+</html>

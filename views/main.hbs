@@ -1,0 +1,168 @@
+<html>
+<head>
+	<title>Mobile Learning</title>
+        <meta charset="utf-8">
+<!-- <meta name="viewport" content="width=device-width, initial-scale=1"> -->
+  <link href="assets/css/bootstrap.css" rel="stylesheet" type="text/css"/>    
+	<style>
+
+	/* Remove the navbar's default margin-bottom and rounded borders */ 
+    .navbar {
+      margin-bottom: 0;
+      border-radius: 0;
+    }
+    
+    /* Set height of the grid so .sidenav can be 100% (adjust as needed) */
+    .row.content {height: 550px}
+    
+    /* Set gray background color and 100% height */
+    .sidenav {
+      padding-top: 20px;
+      background-color: #f1f1f1;
+      height: 100%;
+    }
+    
+    /* Set black background color, white text and some padding */
+    /* footer {
+      background-color: #555;
+      color: white;
+      padding: 15px;
+    }*/
+
+   /*   footer {
+     position: fixed;
+     left: 0;
+     bottom: 0;
+     width: 100%;
+     background-color: #555;
+     color: white;
+     padding: 10px;
+     text-align: center;
+  }*/
+
+  footer{
+    width: 100%;
+    text-align: center;
+    padding: 3px;
+    background-color: #555;
+     color: white;
+  }
+
+  .menu {
+    width: 150px;
+    border: 1px solid #e7e7e7;
+    padding: 10px;
+    background-color: #dedede;
+  }
+    
+    /* On small screens, set height to 'auto' for sidenav and grid */
+    @media screen and (max-width: 767px) {
+      .sidenav {
+        height: auto;
+        padding: 15px;
+      }
+      .row.content {height:auto;} 
+    }
+
+    #navlist {
+  position: relative;
+}
+	</style>
+
+<!--
+<link rel="stylesheet" href="/assets/css/bootstrap.min.css"> 
+  <link rel="stylesheet" href="/assets/css/jquery-ui.css"> 
+  <link rel="stylesheet" href="/assets/css/loadingModal.css"> 
+-->
+</head>
+<body>
+
+<nav class="navbar navbar-inverse">
+  <div class="container-fluid">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#myNavbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>                        
+      </button>
+      
+      
+    </div>
+    <div class="collapse navbar-collapse" id="myNavbar">
+      <ul class="nav navbar-nav">
+        <li class="active"><a href="/">Home</a></li>
+        <!--<li><a href="#">About</a></li> --!>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        <li><a href="#">{{fullname}}</a></li>
+        <li> 
+          <a href="/logout">  Logout</a></li>
+      </ul>
+    </div>
+  </div>
+</nav>
+  
+<div class="container-fluid text-center">    
+  <div class="row content">
+    <div class="col-sm-2 sidenav">
+      <a href="/list_user" ><div class="menu">User</div></a>
+      <a href="/list_materi" ><div class="menu">Materi</div></a>     
+      <a href="/list_discussion" ><div class="menu">Diskusi</div></a>
+      <a href="/list_comment" ><div class="menu">Komentar</div></a>
+      <a href="/list_exam"><div class="menu">Kuis</div></a>
+      <a href="/list_report"><div class="menu">Laporan Kuis</div></a>
+      <a href="/list_usage"><div class="menu">Aktifitas</div></a>
+      <a href="/profile" ><div class="menu">Profile</div></a>
+      {{#if is_admin}}
+      <a href="/setting"><div class="menu">Setting</div></a>  
+      {{/if}}
+ 
+    </div>
+    
+    <div class="col-sm-8 text-left">    
+  	{{#if list_user}} 
+           {{> list_user_view}}
+        {{else if list_materi}}
+           {{> list_materi_view}}
+        {{else if list_materi_assign}}
+           {{> list_materi_assign_view}}
+        {{else if list_exam}}
+           {{> list_exam_view}}
+	{{else if list_report}}
+           {{> list_report_view}}
+        {{else if list_usage}}
+           {{> list_usage_view}}		 
+        {{else if list_exam_detail}}
+           {{> list_exam_detail_view}}
+	{{else if list_discussion}}
+           {{> list_discussion_view}}
+        {{else if list_discussion_comment}}
+           {{> list_discussion_comment_view}}
+        {{else if list_comment}}
+           {{> list_comment_view}}
+	{{else if profile}}  
+           {{> profile_view}}		 
+	{{else if setting}} 
+	   {{> setting_view}}
+        {{else if detail}} 
+           {{> detail_view}}  		
+    {{else}}
+      <h3>Selamat datang, {{fullname}}</h3>
+      <canvas id="myChart" width="400" height="200"></canvas>
+    {{/if}}
+
+    
+    
+    </div>
+    
+  </div>
+</div>
+
+<!--
+<footer class="container-fluid text-center">
+  <p>&copy;2021 version 1.0</p>
+</footer>
+--!>
+
+</body>
+</html>

@@ -1,0 +1,86 @@
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>Mobile Learning</title>
+ 
+  <link rel="stylesheet" href="/assets/css/bootstrap.min.css"> 
+  <link rel="stylesheet" href="/assets/css/jquery-ui.css"> 
+  <link rel="stylesheet" href="/assets/css/loadingModal.css"> 
+   
+</head>
+<body>
+  
+  <div class="container-fluid">
+
+   <h3> Daftar Materi, {{materi_owner}}</h3>
+  
+  
+	<div class="row">
+
+	    <table class="table table-striped table-hover" id="mytable" >
+	      <thead>
+	        <tr>          
+	          <th>ID</th> 
+	          <th>Name Materi</th>
+	          <th>Materi Aktif</th>  	          
+	        </tr>
+	      </thead>
+	      <tbody id="bodytable">
+	         {{#each data}}          
+	        <tr>
+	          <td>{{id}}</td>    
+	          <td>{{materi_name}}</td>  
+	          <td><input class="form-check-input" data-id="{{id}}" data-assign="{{assign_id}}"  type="checkbox" value="" {{#if isactive}}checked{{/if}}> </td>	     
+	        </tr>
+	        {{/each}}
+	      </tbody>
+	    </table>
+	</div>
+        
+  </div>
+ 
+<script src="/assets/js/jquery-3.2.1.js"></script>  
+<script src="/assets/js/bootstrap.js"></script> 
+<script src="/assets/js/loadingModal.js"></script>  
+<script src="/assets/js/jquery-ui.js"></script>
+
+  
+<script type="text/javascript">
+
+$(document).ready(function(){
+	$("#bodytable").on("change", "input[type=checkbox]", function(){
+		id = $(this).data("id");
+                assignId = $(this).data("assign");
+                accountId = "{{user_id}}";
+
+		if(assignId == ""){
+		    assignId = "-1";
+		}
+		
+		console.log("do save");
+		updateAssing(accountId, id, assignId, this.checked)
+	});
+	
+});
+
+function updateAssing(userId, materiId, assignId, isCheck){
+	path = "/api/update_materi_assign/"+userId+"/"+materiId+"/"+assignId+"/"+isCheck;
+	$.ajax({
+		dataType: "json",
+		url: path,
+		success: function(data){
+			alert("Success");
+		},
+		error: function(data){
+			alert("gagal");
+		}
+	});
+}
+
+</script>
+
+
+</body>
+</html>

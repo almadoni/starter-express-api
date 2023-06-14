@@ -1,4 +1,5 @@
-const pool = require('./connection').pool;
+// const pool = require('./connection').pool;
+const pool = require("../db_config");
 
 const express = require('express');
 
@@ -9,7 +10,7 @@ router.get('/list_materi_assign/:userId/:fullname', (req, res) =>{
 	var userId = req.params.userId;
 	var fullname = req.params.fullname;
 
-	pool.query("select b.id as assign_id, a.id, a.name as materi_name, b.account_id as account, case when b.account_id is null  then false when b.account_id is not null then true end isActive from materi a left join materi_assign b on (a.id = b.materi_id and b.account_id = $1)",[userId], (error, results) =>{
+	pool.all("select b.id as assign_id, a.id, a.name as materi_name, b.account_id as account, case when b.account_id is null  then false when b.account_id is not null then true end isActive from materi a left join materi_assign b on (a.id = b.materi_id and b.account_id = $1)",[userId], (error, results) =>{
           if(error){
              throw error
           }
@@ -52,12 +53,12 @@ router.get('/api/update_materi_assign/:userId/:materiId/:assignId/:isCheck', (re
 
 async function saveAssign(materiId, accountId){
 	const sql = "Insert into materi_assign (materi_id, account_id) values($1, $2)";
-	return pool.query(sql,[materiId, accountId]);
+	return pool.run(sql,[materiId, accountId]);
 }
 
 async function deleteAssign(materiAssignId){
 	const sql = "Delete from materi_assign where id = $1";
-	return pool.query(sql, [materiAssignId]);
+	return pool.run(sql, [materiAssignId]);
 }
 
 

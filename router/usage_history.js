@@ -1,4 +1,5 @@
-const pool = require('./connection').pool;
+// const pool = require('./connection').pool;
+const pool = require("../db_config");
 
 const saveUsage = (req, res) => {
 	console.log("usage history");
@@ -6,7 +7,7 @@ const saveUsage = (req, res) => {
 
         const {userId, type, description} = req.body;
         const sql = 'INSERT into usage_history (user_id, type, description) values ($1, $2, $3)';
-        pool.query(sql,[userId, type, description], (error, results) =>{
+        pool.run(sql,[userId, type, description], (error, results) =>{
           if(error){
 	     res.status(200).json({code: "9999", result: error})  
              throw error

@@ -1,7 +1,10 @@
 var XLSX = require('xlsx')
 
 const express = require('express');
-const pool = require('./connection').pool;
+// const pool = require('./connection').pool;
+const pool = require("../db_config");
+
+
 
 const router = express.Router();
  
@@ -27,7 +30,7 @@ router.get('/initdata', (req, res) =>{
 function findAccounts(fullname,address,email){
     return new Promise(resolve => {
         var query = "SELECT * FROM accounts where fullname = $1 or email = $2";
-        pool.query(query, [fullname,email], function (error, results){             
+        pool.run(query, [fullname,email], function (error, results){             
             if(error){
                 console.log(error)
             } else{
@@ -38,13 +41,36 @@ function findAccounts(fullname,address,email){
 }
 
 async function saveQuestion(examId, name){
-	const sql = 'insert into question (exam_id, name, create_by) values($1, $2, 1) returning id';
-	return pool.query(sql, [examId, name]);
+	const sql = 'insert into question (exam_id, name, create_by) values($1, $2, 1) returning id'; 
+	return pool.run(sql, [examId, name]);
+}
+
+async function saveQuestion2(examId, name){
+	const sql = 'insert into question (exam_id, name, create_by) values($1, $2, 1)'; 
+	return pool.prepare(sql);
+}
+
+async function questionLastId(examId, name){
+	var q = await saveQuestion2(examId, name);
+	var ids = 0;
+	var id = await q.run(1, "demo", function(err){
+		console.log("last id : "+this.lastID);
+		ids = this.lastID;
+	})
+    
+    console.log("curres id : "+id.lastID);
+    console.log("currr id "+ids);
+	return ids; 
+}
+
+async function currId(examId, name){
+	var i = await questionLastId(examId, name);
+	return i;
 }
 
 async function saveAnswer(questionId, option1, option2, option3, option4, option5, answer){
 	const sql = 'insert into answer (question_id, option1, option2, option3, option4, option5, option_answer) values ($1, $2, $3, $4, $5, $6, $7)';
-	return pool.query(sql, [questionId, option1, option2, option3, option4, option5, answer])
+	return pool.run(sql, [questionId, option1, option2, option3, option4, option5, answer])
 }
 
 const prosesData = async (xlData) => { 
@@ -66,10 +92,18 @@ const prosesData = async (xlData) => {
 		optionA = row["jawaban benar"]
 		if(materi_no != undefined && materi_no != 'NAMA'){
 			console.log(id+ "init..."+materi_no+" ---" + nama_kuis+"--"+question_name+"--"+option1+"--"+option2);
-			const input = await saveQuestion(materi_no, question_name);
-			console.log("return id : "+input.rows[0].id);
+			const input = await saveQuestion2(materi_no, question_name);
+ 
+ 			var lastId = await questionLastId(materi_no, question_name);
+			 
 			console.log("num "+num);
-			var questionId = input.rows[0].id;
+ 
+			console.log("last ID : "+lastId);
+			var currentId = await currId(materi_no, question_name);
+
+			console.log(" curr id real : "+currentId);
+
+			var questionId = currentId;
 			var numA = 0;
 			if(optionA == 'A')
 				numA = 1;

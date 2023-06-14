@@ -1,4 +1,5 @@
-const pool = require('./connection').pool;
+// const pool = require('./connection').pool;
+const pool = require("../db_config");
 
 const express = require('express');
 
@@ -6,7 +7,7 @@ const router = express.Router();
 
 router.get('/list_report', (req, res) =>{
 
-	pool.query('select a.*,b.fullname, d.name as materi from poin_exam a left join accounts b on (a.user_id = b.id) left join exam c on (a.exam_id = c.id) left join materi d on (d.id = c.materi_id)', (error, results) =>{
+	pool.all('select a.*,b.fullname, d.name as materi from poin_exam a left join accounts b on (a.user_id = b.id) left join exam c on (a.exam_id = c.id) left join materi d on (d.id = c.materi_id)', (error, results) =>{
           if(error){
              throw error
           }
@@ -15,7 +16,7 @@ router.get('/list_report', (req, res) =>{
 		layout: 'index',
 		username: req.session.username,
 		list_report: true,
-		data: results.rows
+		data: results
 	  });
 
         });
@@ -25,7 +26,7 @@ router.get('/list_report', (req, res) =>{
 
 router.get('/list_report_detail/:examId', (req, res) =>{
 	examId = req.params.examId
-        pool.query('select * from question where exam_id = $1',[examId], (error, results) =>{
+        pool.all('select * from question where exam_id = $1',[examId], (error, results) =>{
           if(error){
              throw error
           }
@@ -35,7 +36,7 @@ router.get('/list_report_detail/:examId', (req, res) =>{
                 username: req.session.username,
                 list_report_detail: true,
 		is_admin: true,
-                data: results.rows,
+                data: results,
 		exam_id: examId
           });
 
@@ -60,7 +61,7 @@ router.post('/add_question', (req, res) => {
                 username: req.session.username,
                 list_exam_detail: true,
                 is_admin: true,
-                data: getQst.rows
+                data: getQst
           });
 
        })();
@@ -69,12 +70,12 @@ router.post('/add_question', (req, res) => {
 
 async function getQuestion(examId){
 	const sql = 'select * from question where exam_id = $1';
-	return pool.query(sql, [examId]);
+	return pool.all(sql, [examId]);
 }
 
 async function saveQuestion(examId, questionName, createBy){
 	const sql = 'insert into question (exam_id,name, create_by) value($1, $2, $3)';
-	return pool.query(sql,[examId, questionName, createBy]);
+	return pool.run(sql,[examId, questionName, createBy]);
 }
 
 

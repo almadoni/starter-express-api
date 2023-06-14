@@ -1,9 +1,10 @@
-const pool = require('./connection').pool;
+// const pool = require('./connection').pool;
+const pool = require("../db_config");
 
 
 const getDiscussions = (req, res) => {
 
-        pool.query('select * from discussion where actived = 0', (error, results) =>{
+        pool.all('select * from discussion where actived = 0', (error, results) =>{
           if(error){
 	     res.status(200).json({code: "9999", result: error})
              throw error
@@ -51,7 +52,7 @@ const setDiscussion = (req, res) => {
 
 async function addDiscussion(materi, userId){
 	const sql = 'INSERT INTO discussion (materi, posted_by) values ($1, $2)';
-	return pool.query(sql, [materi, userId]);
+	return pool.run(sql, [materi, userId]);
 }
 
 const getDiscussionsWithComment = (req, res) => {
@@ -78,12 +79,12 @@ const getDiscussionsWithComment = (req, res) => {
 
 async function getDiscussionList(){
    const sql = 'select * from discussion where actived = 0 order by id desc';
-   return pool.query(sql);
+   return pool.all(sql);
 }
 
 async function getCommentList(discussion_id){
 	const sql = 'select a.*,b.fullname from commentar a left join accounts b on (b.id = a.user_id)  where discussion_id = $1';
-	return pool.query(sql, [discussion_id]);
+	return pool.all(sql, [discussion_id]);
 }
 
 

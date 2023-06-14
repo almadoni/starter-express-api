@@ -7,7 +7,7 @@ const router = express.Router();
 
 router.get('/list_user', (req, res) =>{
 
-	pool.run('select * from accounts order by id', (error, results) =>{
+	pool.all('select * from accounts order by id', (error, results) =>{
           if(error){
              throw error
           }
@@ -26,7 +26,7 @@ router.get('/list_user', (req, res) =>{
 
 const getUsers = (req, res) => {
 
-        pool.run('select * from accounts', (error, results) =>{
+        pool.all('select * from accounts', (error, results) =>{
           if(error){
              throw error
           }

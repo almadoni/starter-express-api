@@ -1,4 +1,5 @@
-const pool = require('./connection').pool;
+// const pool = require('./connection').pool;
+const pool = require("../db_config");
 
 const express = require('express');
 
@@ -6,7 +7,7 @@ const router = express.Router();
 
 router.get('/list_exam', (req, res) =>{
 
-	pool.query('select a.id as exam_id, a.name as name_exam, b.name as name_materi, b.create_date from exam a left join materi b on (a.materi_id = b.id)', (error, results) =>{
+	pool.all('select a.id as exam_id, a.name as name_exam, b.name as name_materi, b.create_date from exam a left join materi b on (a.materi_id = b.id)', (error, results) =>{
           if(error){
              throw error
           }
@@ -25,7 +26,7 @@ router.get('/list_exam', (req, res) =>{
 
 router.get('/list_exam_detail/:examId', (req, res) =>{
 	examId = req.params.examId
-        pool.query('select * from question where exam_id = $1',[examId], (error, results) =>{
+        pool.all('select * from question where exam_id = $1',[examId], (error, results) =>{
           if(error){
              throw error
           }
@@ -69,12 +70,12 @@ router.post('/add_question', (req, res) => {
 
 async function getQuestion(examId){
 	const sql = 'select * from question where exam_id = $1';
-	return pool.query(sql, [examId]);
+	return pool.all(sql, [examId]);
 }
 
 async function saveQuestion(examId, questionName, createBy){
 	const sql = 'insert into question (exam_id,name, create_by) value($1, $2, $3)';
-	return pool.query(sql,[examId, questionName, createBy]);
+	return pool.run(sql,[examId, questionName, createBy]);
 }
 
 

@@ -1,4 +1,5 @@
-const pool = require('./connection').pool;
+// const pool = require('./connection').pool;
+const pool = require("../db_config");
 
 const express = require('express');
 
@@ -6,7 +7,7 @@ const router = express.Router();
 
 router.get('/list_materi', (req, res) =>{
 
-	pool.query('select * from materi order by id', (error, results) =>{
+	pool.all('select * from materi order by id', (error, results) =>{
           if(error){
              throw error
           }
@@ -15,7 +16,7 @@ router.get('/list_materi', (req, res) =>{
 		layout: 'index',
 		username: req.session.username,
 		list_materi: true,
-		data: results.rows
+		data: results
 	  });
 
         });
@@ -26,7 +27,7 @@ router.get('/list_materi', (req, res) =>{
 router.get('/list_materi_assign/:materiId', (req, res) =>{
         materiId = req.params.materiId;
 	console.log("materi id "+materiId);
-        pool.query('select a.*, b.fullname, b.email, b.username from materi_assign a left join accounts b on (a.account_id = b.id) where a.materi_id = $1',[materiId], (error, results) =>{
+        pool.run('select a.*, b.fullname, b.email, b.username from materi_assign a left join accounts b on (a.account_id = b.id) where a.materi_id = $1',[materiId], (error, results) =>{
           if(error){
              throw error
           }
@@ -35,7 +36,7 @@ router.get('/list_materi_assign/:materiId', (req, res) =>{
                 layout: 'index',
                 username: req.session.username,
                 list_materi_assign: true,
-                data: results.rows
+                data: results
           });
 
         });
@@ -46,19 +47,19 @@ router.get('/list_materi_assign/:materiId', (req, res) =>{
 
 const getUsers = (req, res) => {
 
-        pool.query('select * from accounts', (error, results) =>{
+        pool.run('select * from accounts', (error, results) =>{
           if(error){
              throw error
           }
 
-          res.status(200).json(results.rows)
+          res.status(200).json(results)
 
         })
 }
 
 const createUser = (req, res) =>{
 	const {username, password, fullname, email, mhs_id, fcm_id} = req.body;
-	pool.query("INSERT INTO accounts (username, password, fullname, email, mahasiswa_id, firebase_id) values ($1, $2, $3, $4, $5, $6)",
+	pool.run("INSERT INTO accounts (username, password, fullname, email, mahasiswa_id, firebase_id) values ($1, $2, $3, $4, $5, $6)",
 		[username, password, fullname, email, mhs_id, fcm_id], (error, results) =>{
 		if(error){
 		   throw error
@@ -70,7 +71,7 @@ const createUser = (req, res) =>{
 const register = (req, res) =>{
 	console.log(req.body);
         const {username, password, fullname, email, nomahasiswa} = req.body;
-        pool.query("INSERT INTO accounts (username, password, fullname, email, mahasiswa_id) values ($1, $2, $3, $4, $5)",
+        pool.run("INSERT INTO accounts (username, password, fullname, email, mahasiswa_id) values ($1, $2, $3, $4, $5)",
                 [username, password, fullname, email, nomahasiswa], (error, results) =>{
                 if(error){
 		   res.status(200).json({code: "9999", result: error});	
@@ -85,7 +86,7 @@ const updateUser = (req, res) =>{
 	const id = req.params.id;
 	const fcm_id = req.params.fcmid;
 
-	pool.query("UPDATE accounts set firebase_id =$1 WHERE id = $2", [id, fcm_id], (error, results) =>{
+	pool.run("UPDATE accounts set firebase_id =$1 WHERE id = $2", [id, fcm_id], (error, results) =>{
 		if(error){
 		   throw error
 		}

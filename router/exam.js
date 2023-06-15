@@ -9,15 +9,15 @@ const getExams = (req, res) => {
 
 		var dataList = [];
 
-		for (var i=0; i<exam_list.rows.length; i++){
-			examId = exam_list.rows[i].id;
+		for (var i=0; i<exam_list.length; i++){
+			examId = exam_list[i].id;
 			const question_list = await question(examId);
 			dataQuestion = []
-			for (var q=0; q<question_list.rows.length; q++){
-				qId = question_list.rows[q].id;
-				qName = question_list.rows[q].name;
+			for (var q=0; q<question_list.length; q++){
+				qId = question_list[q].id;
+				qName = question_list[q].name;
 				const answerList = await answers(qId);
-				questionValue = {id: qId, name: qName, answers: answerList.rows, total_answer : answerList.rows.length}
+				questionValue = {id: qId, name: qName, answers: answerList, total_answer : answerList.length}
 				dataQuestion.push(questionValue)
 			}
 
@@ -115,19 +115,19 @@ const getScore = (req, res) =>{
 		jsonRst = {code: "9200", result:""}
 
 		const ex = await exam(examId);
-		var currExamId = ex.rows[0].id;
+		var currExamId = ex[0].id;
 
 		const totalQuestion = await getTotalQuestion(currExamId);
 		const totalAnswerExam = await getTotalAnswerExam(trxExam, currExamId, userId);
 	        
-		console.log(totalQuestion.rows);
-		console.log(totalAnswerExam.rows);
+		console.log(totalQuestion);
+		console.log(totalAnswerExam);
 
-		console.log("Total Qest "+totalQuestion.rows[0].total);
-		console.log("Total Ans " +totalAnswerExam.rows[0].total);
+		console.log("Total Qest "+totalQuestion[0].total);
+		console.log("Total Ans " +totalAnswerExam[0].total);
 
-		var currTotalQst = totalQuestion.rows[0].total;
-		var currTotalAExam = totalAnswerExam.rows[0].total;
+		var currTotalQst = totalQuestion[0].total;
+		var currTotalAExam = totalAnswerExam[0].total;
 		var score = 0;
                 console.log("update poin exam score : "+score);
 		if(currTotalQst == 0 && currTotalAExam == 0){
@@ -152,14 +152,14 @@ const getExam = (req, res) =>{
 		console.log("getExam with materi id "+materiId);
 		const ex = await exam(materiId);
 		if(ex.length > 0){
-			examId = ex.rows[0].id;
+			examId = ex[0].id;
 			const question_list = await question(examId);
                         dataQuestion = []
-                        for (var q=0; q<question_list.rows.length; q++){
-                                qId = question_list.rows[q].id;
-                                qName = question_list.rows[q].name;
+                        for (var q=0; q<question_list.length; q++){
+                                qId = question_list[q].id;
+                                qName = question_list[q].name;
                                 const answerList = await answers(qId);
-                                data = {id: qId, name: qName, answers: answerList.rows[0]}
+                                data = {id: qId, name: qName, answers: answerList[0]}
 				dataQuestion.push(data);
                         }
 
@@ -180,15 +180,15 @@ const savePoinExam = (req, res) =>{
 		jsonRst = {code: "9200", result: ""};
 
 		const ex = await exam(examId);
-		var currExamId = ex.rows[0].id;
+		var currExamId = ex[0].id;
 		console.log("curr examId : "+ currExamId);
 
 		const p = await getPoin(userId, currExamId, trxExam);
 		//check apakah trx poin nya ada yg lagi jalan
 		console.log("start poin with check get poin");
-		console.log(p.rows);
+		console.log(p);
 		
-		var isiPoin = p.rows.length;
+		var isiPoin = p.length;
                 console.log("total isi "+isiPoin);
 		
 		if(isiPoin == 0){
@@ -198,56 +198,56 @@ const savePoinExam = (req, res) =>{
 			
 		    const answer = await getAnswer(answerId); //harus check query
                         var isAnswerTrue = false;
-                        if(answer.rows.length > 0){
-                             console.log("open answer"+ answer.rows[0].option_answer);
+                        if(answer.length > 0){
+                             console.log("open answer"+ answer[0].option_answer);
                              console.log("jawaban "+answerOption);
-                             isAnswerTrue = answer.rows[0].option_answer == answerOption;
+                             isAnswerTrue = answer[0].option_answer == answerOption;
                         }
-		    const idInsetPoinExam = insertPoin.rows[0].id
+		    const idInsetPoinExam = insertPoin[0].id
 
 		    console.log("2. start save poin detail... with id : "+ idInsetPoinExam)	
 		    const insertPoinExamDetail = await setPoinExamDetail(idInsetPoinExam, answerId, answerOption, isAnswerTrue);
-                    console.log(insertPoinExamDetail.rows);
+                    console.log(insertPoinExamDetail);
 	
-		    console.log("response id : " + insertPoin.rows[0].id);
+		    console.log("response id : " + insertPoin[0].id);
 		    jsonRst.code = "9200";
-		    jsonRst.result = insertPoin.rows[0].id;
+		    jsonRst.result = insertPoin[0].id;
 		}else{
 		    console.log("3. lanjut kan update poin detail");	
-		    console.log("update id "+p.rows[0].id);
+		    console.log("update id "+p[0].id);
 		    //todo update
 	            //1. check poin examp detail 
-		    pei = p.rows[0].id;
+		    pei = p[0].id;
 		    const checkDetail = await getPoinExam(pei, answerId, trxExam);
-		    console.log(checkDetail.rows);
+		    console.log(checkDetail);
 		    //2. insert or update
-		    if(checkDetail.rows.length > 0){		
+		    if(checkDetail.length > 0){		
 			console.log("start poin exam detail...");
 			const answer = await getAnswer(answerId); //harus check query
                         var isAnswerTrue = false;
-                        if(answer.rows.length > 0){
-                             console.log("open answer"+ answer.rows[0].option_answer);
+                        if(answer.length > 0){
+                             console.log("open answer"+ answer[0].option_answer);
                              console.log("jawaban "+answerOption);
-                             isAnswerTrue = answer.rows[0].option_answer == answerOption;
+                             isAnswerTrue = answer[0].option_answer == answerOption;
                         }
 			console.log("4. update poin exam detail...");
 			const updatePExamDetail = await updatePoinExamDetail(pei, answerId, isAnswerTrue, answerOption);
-			console.log("4. done update "+updatePExamDetail.rows);
+			console.log("4. done update "+updatePExamDetail);
 		    }else{			
 			console.log("5. insert poin exam detail");
 			const answer = await getAnswer(answerId); //harus check query
 			var isAnswerTrue = false;
-			if(answer.rows.length > 0){
-			     console.log("open answer"+ answer.rows[0].option_answer);
+			if(answer.length > 0){
+			     console.log("open answer"+ answer[0].option_answer);
 			     console.log("jawaban "+answerOption);
-			     isAnswerTrue = answer.rows[0].option_answer == answerOption;
+			     isAnswerTrue = answer[0].option_answer == answerOption;
 			}
-			//var poinId = checkDetail.rows[0].poin_exam_id;    
+			//var poinId = checkDetail[0].poin_exam_id;    
 			const insertPoinExamDetail = await setPoinExamDetail(pei, answerId, answerOption, isAnswerTrue);
 			console.log("5. done insert");
-			console.log(insertPoinExamDetail.rows);    
+			console.log(insertPoinExamDetail);    
 		    }
-		    jsonRst.result = "update id:"+p.rows[0].id;
+		    jsonRst.result = "update id:"+p[0].id;
 		}
 
 		res.status(200).json(jsonRst);

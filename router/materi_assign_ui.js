@@ -21,7 +21,7 @@ router.get('/list_materi_assign/:userId/:fullname', (req, res) =>{
 		list_materi_assign: true,
 		materi_owner: fullname,
 		user_id: userId,
-		data: results.rows
+		data: results
 	  });
 
         });

@@ -12,7 +12,7 @@ const getMateries = (req, res) => {
              throw error
           }
 
-          res.status(200).json({code: "9200", result: results.rows})
+          res.status(200).json({code: "9200", result: results})
 
         })
 }

@@ -11,14 +11,25 @@ router.get('/give_access', (req, res) =>{
 	try{
 		var msg = "";
 
-		fs2.writeFile('newfile.txt', 'Learn Node FS module', function (err) {
-		  if (err) throw err;
-		  console.log('File is created successfully.');
+		// fs2.writeFile('newfile.txt', 'Learn Node FS module', function (err) {
+		//   if (err) throw err;
+		//   console.log('File is created successfully.');
 
-		});
+		// });
 
-		if(fs2.existsSync('newfile.txt')){
-			console.log("file baru ada");
+		// if(fs2.existsSync('newfile.txt')){
+		// 	console.log("file baru ada");
+		// }
+
+		try {
+		  await fs2.copyFile(dbFile, 'demo.db');
+		  console.log(dbFile+' to demo.db');
+		} catch {
+		  console.error('The file could not be copied');
+		}
+
+		if(fs2.existsSync('demo.db')){
+			console.log("demo.db sudah ada");
 		}
 
 		

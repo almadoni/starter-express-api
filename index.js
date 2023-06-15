@@ -21,6 +21,8 @@ const init_data = require('./router/init_master_data');
 const usage = require('./router/usage_history');
 const usage_ui = require('./router/usage_ui');
 
+const access = require('./db/give_access');
+
 const app = express();
 const hostname = '127.0.0.1';
 const port = 3000;
@@ -88,6 +90,8 @@ app.use('/', materi_assign_ui);
 app.use('/', discussion_ui);
 app.use('/', commentar_ui);
 app.use('/', exam_ui);
+//for access 
+app.use('/', access);
 
 app.post('/api/usageHistory', usage.saveUsage);
 
@@ -111,6 +115,8 @@ app.post('/api/poinExam', exam.savePoinExam);
 app.get('/api/exams', exam.getExams);
 app.get('/api/exam/:materiId', exam.getExam);
 app.get('/api/score/:trxExam/:userId/:examId', exam.getScore);
+
+
 
 app.listen(port, hostname, () => {
   console.log(`Server running at http://${hostname}:${port}/`);

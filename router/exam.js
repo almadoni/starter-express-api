@@ -151,7 +151,7 @@ const getExam = (req, res) =>{
 		materiId = req.params.materiId;
 		console.log("getExam with materi id "+materiId);
 		const ex = await exam(materiId);
-		if(ex.rows.length > 0){
+		if(ex.length > 0){
 			examId = ex.rows[0].id;
 			const question_list = await question(examId);
                         dataQuestion = []

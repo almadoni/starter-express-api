@@ -14,16 +14,21 @@ router.get('/give_access', (req, res) =>{
 		fs2.writeFile('newfile.txt', 'Learn Node FS module', function (err) {
 		  if (err) throw err;
 		  console.log('File is created successfully.');
+
 		});
+
+		if(fs2.existsSync('newfile.txt')){
+			console.log("file baru ada");
+		}
 
 		
 		console.log("path : "+dbFile);
 		if (fs.existsSync(dbFile)) {
-		  msg =+ "file exists";	
+		  msg = "file exists";	
 		  console.log('file exists');
 		} else {
 		  console.log('file not found!');
-		  msg =+ "file not found!"
+		  msg = "file not found!"
 		}
 
 		fs.chmod(dbFile, 0o600, () => {	 

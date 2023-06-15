@@ -1,5 +1,5 @@
 const fs = require('fs');
-const fs2 = require('@cyclic.sh/s3fs')(CYCLIC_BUCKET_NAME)
+const fs2 = require('@cyclic.sh/s3fs')('cyclic-lazy-plum-lemur-robe-ap-northeast-2')
 
 const express = require('express');
 const router = express.Router();

@@ -11,16 +11,16 @@ router.get('/list_exam', (req, res) =>{
           if(error){
              throw error
           }
+          console.log("list examp...");
 
           res.render('main',{
-		layout: 'index',
-		username: req.session.username,
-		list_exam: true,
-		data: results.rows
-	  });
+						layout: 'index',
+						username: req.session.username,
+						list_exam: true,
+						data: results
+					});
 
         });
-
 
 });
 
@@ -36,7 +36,7 @@ router.get('/list_exam_detail/:examId', (req, res) =>{
                 username: req.session.username,
                 list_exam_detail: true,
 		is_admin: true,
-                data: results.rows,
+                data: results,
 		exam_id: examId
           });
 

@@ -53,7 +53,7 @@ async function saveQuestion2(examId, name){
 async function questionLastId(examId, name){
 	var q = await saveQuestion2(examId, name);
 	var ids = 0;
-	var id = await q.run(1, "demo", function(err){
+	var id = await q.run(examId, name, function(err){
 		console.log("last id : "+this.lastID);
 		ids = this.lastID;
 	})
@@ -61,6 +61,39 @@ async function questionLastId(examId, name){
     console.log("curres id : "+id.lastID);
     console.log("currr id "+ids);
 	return ids; 
+}
+
+async function questionLastId2(examId, name, num, optionA, option1, option2, option3, option4, option5){
+	var q = await saveQuestion2(examId, name);
+	
+	await q.run(examId, name, async function(err){
+		console.log("last id : "+this.lastID);
+
+		var lastId = this.lastID;
+			 
+			console.log("num "+num);
+ 
+			console.log("last ID : "+lastId);
+			var currentId = this.lastID;
+
+			console.log(" curr id real : "+currentId);
+
+			var questionId = currentId;
+			var numA = 0;
+			if(optionA == 'A')
+				numA = 1;
+			else if(optionA == 'B')
+				numA = 2;
+			else if (optionA == 'C')
+				numA = 3;
+			else if (optionA == 'D')
+				numA= 4;
+			else if (optionA == 'E')
+				numA = 5;
+			await saveAnswer(questionId, option1, option2, option3, option4, option5, numA);
+			
+		 
+	});  
 }
 
 async function currId(examId, name){
@@ -93,17 +126,19 @@ const prosesData = async (xlData) => {
 		if(materi_no != undefined && materi_no != 'NAMA'){
 			console.log(id+ "init..."+materi_no+" ---" + nama_kuis+"--"+question_name+"--"+option1+"--"+option2);
 			const input = await saveQuestion2(materi_no, question_name);
+
+			// await questionLastId2(materi_no, question_name, num, optionA, option1, option2, option3, option4, option5);
  
  			var lastId = await questionLastId(materi_no, question_name);
 			 
 			console.log("num "+num);
  
 			console.log("last ID : "+lastId);
-			var currentId = await currId(materi_no, question_name);
+			// var currentId = await currId(materi_no, question_name);
 
-			console.log(" curr id real : "+currentId);
+			// console.log(" curr id real : "+currentId);
 
-			var questionId = currentId;
+			var questionId = num;
 			var numA = 0;
 			if(optionA == 'A')
 				numA = 1;
@@ -116,7 +151,7 @@ const prosesData = async (xlData) => {
 			else if (optionA == 'E')
 				numA = 5;
 			const inputAnsw = await saveAnswer(questionId, option1, option2, option3, option4, option5, numA);
-			//if (num == 3) break;
+			// if (num == 3) break;
 		}  
 	} 
  

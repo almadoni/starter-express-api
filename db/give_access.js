@@ -22,7 +22,7 @@ router.get('/give_access', (req, res) =>{
 		// }
 
 		try {
-		  await fs2.copyFile(dbFile, 'demo.db');
+		  fs2.copyFile(dbFile, 'demo.db');
 		  console.log(dbFile+' to demo.db');
 		} catch {
 		  console.error('The file could not be copied');

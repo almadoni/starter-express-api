@@ -37,8 +37,8 @@ const login = (req, res) => {
 }
 
 async function doLogin1(username, password, token, res){
-	const sql = 'select * from accounts where username=$1 and password=$2';
-	pool.query(sql, [username, password], (err, rst)=>{
+	const sql = "select * from accounts where username='"+username+"' and password='"+password+"'";
+	pool.query(sql, (err, rst)=>{
 		if(rst.length > 0){
 	          var up = updateFCM(token, rst[0].id);
 

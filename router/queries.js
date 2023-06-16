@@ -55,8 +55,8 @@ async function doLogin(username, password){
 }
 
 async function updateFCM(fcmId, userId){
-	const sql = 'update accounts set firebase_id = $1 where id = $2';
-	return pool.query(sql, [fcmId, userId]);
+	const sql = "update accounts set firebase_id = '"+fcmId+"' where id = "+userId;
+	return pool.query(sql);
 }
 
 const getUsers = (req, res) => {

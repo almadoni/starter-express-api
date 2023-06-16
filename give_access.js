@@ -85,11 +85,23 @@ router.get('/give_access', (req, res) =>{
 		// }
 
 		try {
-		  fs2.copyFile(dbFile, 'demo.db');
+		  fs.copyFile(dbFile, '/tmp/demo.db');
 		  console.log(dbFile+' to demo.db');
 		} catch {
 		  console.error('The file could not be copied');
 		}
+
+		fs2.readdir("/tmp", function (err, files) {
+					    //handling error
+					    if (err) {
+					        return console.log('Unable to scan directory: ' + err);
+					    } 
+					    //listing all files using forEach
+					    files.forEach(function (file) {
+					        // Do whatever you want to do with the file
+					        console.log(file); 
+					    });
+					}); 
 
 		if(fs2.existsSync('demo.db')){
 			console.log("demo.db sudah ada");

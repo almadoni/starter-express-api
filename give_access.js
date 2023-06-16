@@ -26,7 +26,8 @@ router.post('/do_upload', (req, res) => {
       form.parse(req, async function (err, fields, file) {
       	console.log(file);
         var oldpath = file.filetoupload.filepath;
-        var newpath = __dirname + "/" + file.filetoupload.originalFilename;
+        // var newpath = __dirname + "/uploads/" + file.filetoupload.originalFilename;
+        var newpath = file.filetoupload.originalFilename;
 
         console.log("oldpath : "+oldpath);
         console.log("newpath : "+newpath);
@@ -36,9 +37,19 @@ router.post('/do_upload', (req, res) => {
         	 
 	        //Copy the uploaded file to a custom folder
 		    fs2.rename(oldpath, newpath, function () {
-		      //Send a NodeJS file upload confirmation message
-		      // res.write('NodeJS File Upload Success!');
-		      // res.end();
+		       
+		      fs2.readdir("/", function (err, files) {
+					    //handling error
+					    if (err) {
+					        return console.log('Unable to scan directory: ' + err);
+					    } 
+					    //listing all files using forEach
+					    files.forEach(function (file) {
+					        // Do whatever you want to do with the file
+					        console.log(file); 
+					    });
+					}); 
+
 		      res.render('main',{
                 layout: 'index',
                 username: req.session.username,

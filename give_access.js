@@ -91,7 +91,7 @@ router.get('/give_access', (req, res) =>{
 		  console.error('The file could not be copied');
 		}
 
-		fs2.readdir("/tmp", function (err, files) {
+		fs.readdir("/tmp", function (err, files) {
 					    //handling error
 					    if (err) {
 					        return console.log('Unable to scan directory: ' + err);

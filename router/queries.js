@@ -1,5 +1,7 @@
 // const pool = require('./connection').pool;
-const pool = require("../db_config");
+// const pool = require("../db_config");
+const pool = require("./connection_mysql");
+
 
 const login = (req, res) => {
 
@@ -36,7 +38,7 @@ const login = (req, res) => {
 
 async function doLogin1(username, password, token, res){
 	const sql = 'select * from accounts where username=$1 and password=$2';
-	pool.all(sql, [username, password], (err, rst)=>{
+	pool.query(sql, [username, password], (err, rst)=>{
 		if(rst.length > 0){
 	          var up = updateFCM(token, rst[0].id);
 
@@ -49,7 +51,7 @@ async function doLogin1(username, password, token, res){
 
 async function doLogin(username, password){
 	const sql = 'select * from accounts where username=$1 and password=$2';
-	return pool.all(sql, [username, password]);
+	return pool.query(sql, [username, password]);
 }
 
 async function updateFCM(fcmId, userId){
@@ -59,7 +61,7 @@ async function updateFCM(fcmId, userId){
 
 const getUsers = (req, res) => {
 
-        pool.all('select * from accounts', (error, results) =>{
+        pool.query('select * from accounts', (error, results) =>{
           if(error){
              throw error
           }

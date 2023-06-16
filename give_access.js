@@ -85,8 +85,8 @@ router.get('/give_access', (req, res) =>{
 		// }
 
 		try {
-		  fs.copyFile(dbFile, '/tmp/demo.db');
-		  console.log(dbFile+' to demo.db');
+		  // fs.copyFile(dbFile, '/tmp/demo.db');
+		  // console.log(dbFile+' to demo.db');
 		} catch {
 		  console.error('The file could not be copied');
 		}

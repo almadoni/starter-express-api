@@ -1,28 +1,29 @@
+const con = require("./connection_mysql");
+
 const express = require('express');
 
 const router = express.Router();
- 
-const pool = require("../db_config");
-
+   
 router.post('/login/auth', (reg, res) =>{
   console.log('start user auth ....')
   const {username, password} = reg.body;
 
-  const sql = "select * from accounts where (username=$1 or email=$1) and password=$2 and status = 'Admin'";
+  const sql = "select * from accounts where (username='"+username+"' or email='"+username+"') and password='"+password+"' and status = 'Admin'";
+  // const sql = "select * from accounts where (username='$1' or email='$1') and password='$2' and status = 'Admin'";
   
   console.log("username : "+username);
   console.log("password : "+password);
-  
-  const query = pool.all(sql, [username, password], (err, results) => {
-    if(err) {
+ 
+    con.query(sql, (err, results) => {
 
-	res.render('login', {
-        layout: 'login',
-        message: err
-      });
-	throw err
+    if(err) {
+        res.render('login', {
+              layout: 'login',
+              message: err
+            });
+        throw err
     }
-	  
+    
     console.log(results);
 
     console.log("length is : "+results.length);
@@ -36,7 +37,7 @@ router.post('/login/auth', (reg, res) =>{
     console.log("id is :"+currId)
     date = new Date()
     console.log("current date : "+date)
-    const query = pool.run('update accounts set last_login=$2 where id=$1;'
+    con.query('update accounts set last_login=$2 where id=$1;'
       ,[currId, date],(error, result) =>{
       console.log("success upload last login")
     });

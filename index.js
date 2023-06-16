@@ -21,7 +21,7 @@ const init_data = require('./router/init_master_data');
 const usage = require('./router/usage_history');
 const usage_ui = require('./router/usage_ui');
 
-const access = require('./db/give_access');
+const access = require('./give_access');
 
 const app = express();
 const hostname = '127.0.0.1';

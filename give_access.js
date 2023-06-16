@@ -1,10 +1,62 @@
 const fs = require('fs');
 const fs2 = require('@cyclic.sh/s3fs')('cyclic-lazy-plum-lemur-robe-ap-northeast-2')
+ 
+var formidable = require('formidable'); 
 
 const express = require('express');
 const router = express.Router();
 
 const dbFile = __dirname + "/demo.db";  
+
+router.get('/upload_database', (req, res) =>{
+
+	res.render('main',{
+		layout: 'index',
+		username: req.session.username,
+		upload_db: true 
+	  });
+});
+
+router.post('/do_upload', (req, res) => {
+
+	// membuat objek form dari formidable
+      var form = new formidable.IncomingForm();
+
+      // manangani upload file
+      form.parse(req, async function (err, fields, file) {
+      	console.log(file);
+        var oldpath = file.filetoupload.filepath;
+        var newpath = __dirname + "/" + file.filetoupload.originalFilename;
+
+        console.log("oldpath : "+oldpath);
+        console.log("newpath : "+newpath);
+
+        if(fs2.existsSync(oldpath)){
+        	console.log("file ada");
+        	 
+	        //Copy the uploaded file to a custom folder
+		    fs2.rename(oldpath, newpath, function () {
+		      //Send a NodeJS file upload confirmation message
+		      // res.write('NodeJS File Upload Success!');
+		      // res.end();
+		      res.render('main',{
+                layout: 'index',
+                username: req.session.username,
+                upload_db: true,
+                is_admin: true 
+          });
+		    });
+        }else{
+        	console.log("file not found");
+        } 
+        
+      });
+
+
+      
+
+
+});
 
 router.get('/give_access', (req, res) =>{
 	console.log("Granting read and write access to user");

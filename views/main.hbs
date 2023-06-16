@@ -112,6 +112,7 @@
       <a href="/list_exam"><div class="menu">Kuis</div></a>
       <a href="/list_report"><div class="menu">Laporan Kuis</div></a>
       <a href="/list_usage"><div class="menu">Aktifitas</div></a>
+      <a href="/upload_database"><div class="menu">Upload DB</div></a>
       <a href="/profile" ><div class="menu">Profile</div></a>
       {{#if is_admin}}
       <a href="/setting"><div class="menu">Setting</div></a>  
@@ -145,7 +146,9 @@
 	{{else if setting}} 
 	   {{> setting_view}}
         {{else if detail}} 
-           {{> detail_view}}  		
+           {{> detail_view}}
+        {{else if upload_db}} 
+           {{> upload_view}}     		
     {{else}}
       <h3>Selamat datang, {{fullname}}</h3>
       <canvas id="myChart" width="400" height="200"></canvas>

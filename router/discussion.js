@@ -51,7 +51,7 @@ const setDiscussion = (req, res) => {
 }
 
 async function addDiscussion(materi, userId){
-	const sql = 'INSERT INTO discussion (materi, posted_by) values ('+materi+', '+userId+')';
+	const sql = 'INSERT INTO discussion (materi, posted_by) values ("'+materi+'", '+userId+')';
 	return pool.query(sql);
 }
 

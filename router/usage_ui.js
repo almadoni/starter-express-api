@@ -8,7 +8,7 @@ const router = express.Router();
 
 router.get('/list_usage', (req, res) =>{
 
-	pool.query("select a.*,b.fullname from usage_history a left join accounts b on (a.user_id = b.id) order by created_date desc", (error, results) =>{
+	pool.query("select a.*, a.create_date as created_date,b.fullname from usage_history a left join accounts b on (a.user_id = b.id) order by created_date desc", (error, results) =>{
           if(error){
              throw error
           }

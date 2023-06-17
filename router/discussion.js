@@ -10,10 +10,10 @@ const getDiscussions = (req, res) => {
              throw error
           }
 
-          //res.status(200).json(results.rows)
+          //res.status(200).json(results)
           console.log("Total discussion :"+results.length)
 
-         if(results.rows.length > 0){		
+         if(results.length > 0){		
 	  res.status(200).json({code: "9200", result: results})	
 	 }else{
 	   res.status(200).json({code: "9999", result: "Error"})
@@ -35,12 +35,12 @@ const setDiscussion = (req, res) => {
 	    
 	    const hasil = await getDiscussionList();
 
-            for(var i=0; i<hasil.rows.length; i++){
-                   diss = hasil.rows[i]
+            for(var i=0; i<hasil.length; i++){
+                   diss = hasil[i]
                    
                    const commentRst = await getCommentList(diss.id)
 
-                   dataArray.push({id: diss.id, materi: diss.materi, data: commentRst.rows})
+                   dataArray.push({id: diss.id, materi: diss.materi, data: commentRst})
             }
             jsonRst.result = dataArray
 
@@ -65,11 +65,11 @@ const getDiscussionsWithComment = (req, res) => {
 		const hasil = await getDiscussionList();
 		
 		for(var i=0; i<hasil.length; i++){
-		   diss = hasil.rows[i]		 
+		   diss = hasil[i]		 
 		   console.log("discussion id"+ diss.id);
 	           const commentRst = await getCommentList(diss.id)
 		   
-		   dataArray.push({id: diss.id, materi: diss.materi, data: commentRst.rows})
+		   dataArray.push({id: diss.id, materi: diss.materi, data: commentRst})
 		}
 		jsonRst.result = dataArray
 

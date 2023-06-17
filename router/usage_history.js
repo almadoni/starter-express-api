@@ -8,7 +8,7 @@ const saveUsage = (req, res) => {
 	console.log(req.body);
 
         const {userId, type, description} = req.body;
-        const sql = 'INSERT into usage_history (user_id, type, description) values ('+userId+', "'+type+'", '"+description+"')';
+        const sql = 'INSERT into usage_history (user_id, type, description) values ('+userId+', "'+type+'", "'+description+'")';
         pool.run(sql,[userId, type, description], (error, results) =>{
           if(error){
 	     res.status(200).json({code: "9999", result: error})  

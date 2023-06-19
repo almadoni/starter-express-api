@@ -11,7 +11,7 @@ router.get('/list_materi_assign/:userId/:fullname', (req, res) =>{
 	var userId = req.params.userId;
 	var fullname = req.params.fullname;
 
-	pool.query("select b.id as assign_id, a.id, a.name as materi_name, b.account_id as account, case when b.account_id is null  then false when b.account_id is not null then true end isActive from materi a left join materi_assign b on (a.id = b.materi_id and b.account_id = "+user_id+")", (error, results) =>{
+	pool.query("select b.id as assign_id, a.id, a.name as materi_name, b.account_id as account, case when b.account_id is null  then false when b.account_id is not null then true end isActive from materi a left join materi_assign b on (a.id = b.materi_id and b.account_id = "+userId+")", (error, results) =>{
           if(error){
              throw error
           }
@@ -39,11 +39,11 @@ router.get('/api/update_materi_assign/:userId/:materiId/:assignId/:isCheck', (re
 	if(isCheck == "true"){
 	   console.log("do insert");
 		doSave = await saveAssign(materiId, userId);
-		console.log(doSave.rows);
+		console.log(doSave);
 	}else{
 	   console.log("do delete");
 		doDelete = await deleteAssign(assignId);
-		console.log(doDelete.rows);
+		console.log(doDelete);
 	}
 
 	jsonResult = {code: "9200", result: "OK"}

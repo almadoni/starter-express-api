@@ -1,5 +1,6 @@
 // const pool = require('./connection').pool;
-const pool = require("../db_config");
+// const pool = require("../db_config");
+const pool = require("./connection_mysql");
 
 const express = require('express');
 
@@ -7,7 +8,7 @@ const router = express.Router();
 
 router.get('/list_user', (req, res) =>{
 
-	pool.all('select * from accounts order by id', (error, results) =>{
+	pool.query('select * from accounts order by id', (error, results) =>{
           if(error){
              throw error
           }
@@ -26,7 +27,7 @@ router.get('/list_user', (req, res) =>{
 
 const getUsers = (req, res) => {
 
-        pool.all('select * from accounts', (error, results) =>{
+        pool.query('select * from accounts', (error, results) =>{
           if(error){
              throw error
           }
@@ -38,7 +39,7 @@ const getUsers = (req, res) => {
 
 const createUser = (req, res) =>{
 	const {username, password, fullname, email, mhs_id, fcm_id} = req.body;
-	pool.run("INSERT INTO accounts (username, password, fullname, email, mahasiswa_id, firebase_id) values ($1, $2, $3, $4, $5, $6)",
+	pool.query("INSERT INTO accounts (username, password, fullname, email, mahasiswa_id, firebase_id) values ($1, $2, $3, $4, $5, $6)",
 		[username, password, fullname, email, mhs_id, fcm_id], (error, results) =>{
 		if(error){
 		   throw error
@@ -48,18 +49,7 @@ const createUser = (req, res) =>{
 }
 
 const register = (req, res) =>{
-	/*
-	console.log(req.body);
-        const {username, password, fullname, email, nomahasiswa} = req.body;
-        pool.run("INSERT INTO accounts (username, password, fullname, email, mahasiswa_id) values ($1, $2, $3, $4, $5)",
-                [username, password, fullname, email, nomahasiswa], (error, results) =>{
-                if(error){
-		   res.status(200).json({code: "9999", result: error});	
-                   throw error
-                }
-                res.status(200).json({code: "9200", result: "OK"});
-        })
-	*/
+	 
 	(async ()=> {
 		console.log(reg.body);
 		const {username, password, fullname, email, nomahasiswa} = req.body;
@@ -73,12 +63,12 @@ const register = (req, res) =>{
 
 async function saveRegister(username, password, fullname, email, nomahasiswa){
 	const sql = "INSERT INTO accounts (username, password, fullname, email, mahasiswa_id) values ($1, $2, $3, $4, $5) returning id";
-	return pool.run(sql, [username, password, fullname, email, nomahasiswa]);
+	return pool.query(sql, [username, password, fullname, email, nomahasiswa]);
 }
 
 async function saveMateri(materiId, accountId){
-	const sql = "insert into materi_assign (materi_id, account_id) values ($1, $2)";
-	return pool.run(sql, [materiId, accountId]);
+	const sql = "insert into materi_assign (materi_id, account_id) values ("+materiId+", "+accountId+")";
+	return pool.query(sql);
 }
 
 
@@ -86,7 +76,7 @@ const updateUser = (req, res) =>{
 	const id = req.params.id;
 	const fcm_id = req.params.fcmid;
 
-	pool.run("UPDATE accounts set firebase_id =$1 WHERE id = $2", [id, fcm_id], (error, results) =>{
+	pool.query("UPDATE accounts set firebase_id ="+id+" WHERE id = "+fcm_id,  (error, results) =>{
 		if(error){
 		   throw error
 		}

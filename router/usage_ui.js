@@ -27,7 +27,7 @@ router.get('/list_usage', (req, res) =>{
 
 router.get('/list_usage_user/:userId', (req, res) =>{
         const userId = req.params.userId;
-        pool.query("select a.*, to_char(create_date, 'Day, DD-MM-YYYY HH12:MI:SS') as created_date,b.fullname from usage_history a left join accounts b on (a.user_id = b.id) where b.id = "+userId+" order by created_date desc", (error, results) =>{
+        pool.query("select a.*, create_date as created_date,b.fullname from usage_history a left join accounts b on (a.user_id = b.id) where b.id = "+userId+" order by created_date desc", (error, results) =>{
           if(error){
              throw error
           }

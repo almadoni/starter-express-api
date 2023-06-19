@@ -1,5 +1,6 @@
 // const pool = require('./connection').pool;
-const pool = require("../db_config");
+// const pool = require("../db_config");
+const pool = require("./connection_mysql");
 
 const express = require('express');
 
@@ -7,7 +8,7 @@ const router = express.Router();
 
 router.get('/list_materi', (req, res) =>{
 
-	pool.all('select * from materi order by id', (error, results) =>{
+	pool.query('select * from materi order by id', (error, results) =>{
           if(error){
              throw error
           }
@@ -27,7 +28,7 @@ router.get('/list_materi', (req, res) =>{
 router.get('/list_materi_assign/:materiId', (req, res) =>{
         materiId = req.params.materiId;
 	console.log("materi id "+materiId);
-        pool.run('select a.*, b.fullname, b.email, b.username from materi_assign a left join accounts b on (a.account_id = b.id) where a.materi_id = $1',[materiId], (error, results) =>{
+        pool.query('select a.*, b.fullname, b.email, b.username from materi_assign a left join accounts b on (a.account_id = b.id) where a.materi_id = '+materiId, (error, results) =>{
           if(error){
              throw error
           }

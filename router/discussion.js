@@ -124,7 +124,7 @@ async function getDiscussionList(){
 }
 
 async function getDiscussionList2(data, callback){
-   const sql = 'select d.id as disc_id, d.*, c.*, c.id as id_commnet, a.fullname as fullname from commentar c left join discussion d on(d.id = c.discussion_id) left join accounts a on (a.id = c.user_id) where d.actived = 0 order by d.id desc';
+   const sql = 'select d.id as disc_id, d.*, c.*, c.id as id_commnet, a.fullname as fullname FROM discussion d left join commentar c on (d.id = c.discussion_id) left join accounts a on (a.id = c.user_id) where d.actived = 0 order by d.id desc';
    var data;
    pool.query(sql, function(err, rows, field){
    	if(err) throw callback(err,null);

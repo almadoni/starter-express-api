@@ -63,18 +63,45 @@ const getDiscussionsWithComment = (req, res) => {
 		var jsonRst = {code: "9200", result: ""}
 		var dataArray = []
 		
-		const hasil = await getDiscussionList();
-		
-		for(var i=0; i<hasil.length; i++){
-		   diss = hasil[i]		 
-		   console.log("discussion id"+ diss.id);
-	           const commentRst = await getCommentList(diss.id)
-		   
-		   dataArray.push({id: diss.id, materi: diss.materi, data: commentRst})
-		}
-		jsonRst.result = dataArray
+		const hasil = await getDiscussionList2(dataArray, function(err, rst){
+			console.log("call back");
+			console.log(rst.length);
+			for(var i=0; i<rst.length; i++){
+			    id = rst[i].id;
+			    materi = rst[i].materi;
+				dataArray.push({id: id, materi: materi, data: []});
+			    console.log("id is : "+id);
 
-		res.status(200).json(jsonRst);
+			    getCommentList2(id, function(err ,data){
+			    	console.log("data length : "+data.length)
+			    	if(data.length > 0){
+			    		dataArray.push({id: id, materi: materi, data: data});	 	
+			    	} 
+			    })
+
+				
+			}
+
+			console.log(dataArray)
+
+			jsonRst.result = dataArray;
+			console.log("hasil : "+jsonRst); 
+
+			res.status(200).json(jsonRst); 
+			
+		});
+
+
+		// for(var i=0; i<hasil.length; i++){
+		//    diss = hasil[i]		 
+		//    console.log("discussion id"+ diss.id);
+	    //        const commentRst = await getCommentList(diss.id)
+		   
+		//    dataArray.push({id: diss.id, materi: diss.materi, data: commentRst})
+		// }
+		// jsonRst.result = dataArray
+
+		// res.status(200).json(jsonRst);
 	})();
 }
 
@@ -83,9 +110,29 @@ async function getDiscussionList(){
    return pool.query(sql);
 }
 
+async function getDiscussionList2(data, callback){
+   const sql = 'select * from discussion where actived = 0 order by id desc';
+   var data;
+   pool.query(sql, function(err, rows, field){
+   	if(err) throw callback(err,null);
+ 
+   	console.log(rows);
+   	callback(null, rows);
+   }); 
+}
+
 async function getCommentList(discussion_id){
 	const sql = 'select a.*,b.fullname from commentar a left join accounts b on (b.id = a.user_id)  where discussion_id = '+discussion_id;
 	return pool.query(sql);
+}
+
+async function getCommentList2(discussion_id, callback){
+	const sql = 'select a.*,b.fullname from commentar a left join accounts b on (b.id = a.user_id)  where discussion_id = '+discussion_id;
+	pool.query(sql, function(err, rows, field){
+		if(err) throw callback(err, null);
+
+		callback(null, rows);	
+	});
 }
 
 

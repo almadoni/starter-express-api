@@ -62,24 +62,37 @@ const getDiscussionsWithComment = (req, res) => {
 	(async () =>{
 		var jsonRst = {code: "9200", result: ""}
 		var dataArray = []
+		var comments = [];
+ 
 		
-		const hasil = await getDiscussionList2(dataArray, function(err, rst){
+		const hasil = await getDiscussionList2(dataArray, async function(err, rst){
 			console.log("call back");
 			console.log(rst.length);
+			currIdDisc = 0;
+
 			for(var i=0; i<rst.length; i++){
-			    id = rst[i].id;
+			    id = rst[i].disc_id;
+			    idComment = rst[i].id_commnet;
+			    comment = rst[i].comment;
+			    userId = rst[i].user_id;
+			    createdDate = rst[i].created_date;
 			    materi = rst[i].materi;
-				dataArray.push({id: id, materi: materi, data: []});
-			    console.log("id is : "+id);
+			    discussionId = rst[i].discussion_id;
+			    fullname = rst[i].fullname;
+			    
+			    if(currIdDisc != id){
+			    	comments = [];    
+			    }
 
-			    getCommentList2(id, function(err ,data){
-			    	console.log("data length : "+data.length)
-			    	if(data.length > 0){
-			    		dataArray.push({id: id, materi: materi, data: data});	 	
-			    	} 
-			    })
+			    if(id == discussionId){
+			    	comments.push({id: idComment, comment: comment, user_id: userId, created_date: createdDate, discussion_id: discussionId, fullname: fullname});	
+			    }  
 
-				
+			    if(currIdDisc != id){
+			        currIdDisc = id;  
+			    	dataArray.push({id: id, materi: materi, data: comments});	
+			    }  
+				 
 			}
 
 			console.log(dataArray)
@@ -111,7 +124,7 @@ async function getDiscussionList(){
 }
 
 async function getDiscussionList2(data, callback){
-   const sql = 'select * from discussion where actived = 0 order by id desc';
+   const sql = 'select d.id as disc_id, d.*, c.*, c.id as id_commnet, a.fullname as fullname from commentar c left join discussion d on(d.id = c.discussion_id) left join accounts a on (a.id = c.user_id) where d.actived = 0 order by d.id desc';
    var data;
    pool.query(sql, function(err, rows, field){
    	if(err) throw callback(err,null);

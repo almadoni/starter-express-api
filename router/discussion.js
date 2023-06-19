@@ -3,6 +3,7 @@
 const pool = require("./connection_mysql");
 
 const getDiscussions = (req, res) => {
+	   console.log("getDiscussion..");
 
         pool.query('select * from discussion where actived = 0', (error, results) =>{
           if(error){
@@ -57,7 +58,7 @@ async function addDiscussion(materi, userId){
 
 const getDiscussionsWithComment = (req, res) => {
 
-
+    console.log("discussion with comment...");
 	(async () =>{
 		var jsonRst = {code: "9200", result: ""}
 		var dataArray = []

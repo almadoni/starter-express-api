@@ -67,7 +67,7 @@ const addComment = (req, res) =>{
 
 async function setComment(discussion_id, user_id, comment){
    const sql = 'INSERT INTO commentar (discussion_id, user_id, comment) values ('+discussion_id+', '+user_id+', "'+comment+'")';
-   return pool.run(sql);
+   return pool.query(sql);
 }
 
 async function getCommnetList(discussion_id){

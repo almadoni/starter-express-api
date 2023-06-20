@@ -50,10 +50,50 @@ async function exams(){
 	return pool.query(sql);
 }
 
-async function exam(materiId){
+async function exam_old(materiId){
 	//const sql = 'select * from exam a left join materi b on (a.materi_id = b.id) where b.id = $1';
 	const sql = 'select b.* from materi a left join exam b on (a.id = b.materi_id) where a.id = '+materiId;
 	return pool.query(sql);
+}
+
+async function exam(materiId){
+	//const sql = 'select * from exam a left join materi b on (a.materi_id = b.id) where b.id = $1';
+	// const sql = 'select b.* from materi a left join exam b on (a.id = b.materi_id) where a.id = '+materiId;
+	// return pool.query(sql);
+
+	var data = [];
+	const sql = 'select b.* from materi a left join exam b on (a.id = b.materi_id) where a.id = '+materiId;
+	pool.query(sql, function(err, rows, field){
+		if(err) throw err;
+		data = rows;
+		console.log("isi rows "+rows);
+	});
+	console.log(data);
+	return data;
+}
+
+function exam_new(res, materiId){
+	const sql = 'SELECT q.id as q_id, q.*, a.id as a_id, a.* FROM question q left join answer a on (a.question_id = q.id) where q.exam_id = '+materiId;
+	pool.query(sql, function(err, rows, fields){
+		if(err) throw err;
+
+		dataQuestion = []; 
+
+		console.log("length : "+rows.length);
+
+		if(rows.length > 0){
+			for(var i=0; i<rows.length; i++){
+				answer = {id: rows[i].a_id, option1: rows[i].option1, option2: rows[i].option2, option3: rows[i].option3,
+					option4: rows[i].option4, option5: rows[i].option5, option_answer: rows[i].option_answer, question_id: rows[i].question_id
+			};
+				data = {id: rows[i].q_id, name: rows[i].name, answers: answer};
+				dataQuestion.push(data);	
+			}
+			
+		}
+		res.status(200).json({code: "9200", result: dataQuestion});
+
+	});
 }
 
 async function getPoin(userId, examId, trxExam){
@@ -152,22 +192,24 @@ const getExam = (req, res) =>{
 	(async ()=>{
 		materiId = req.params.materiId;
 		console.log("getExam with materi id "+materiId);
-		const ex = await exam(materiId);
-		if(ex.length > 0){
-			examId = ex[0].id;
-			const question_list = await question(examId);
-                        dataQuestion = []
-                        for (var q=0; q<question_list.length; q++){
-                                qId = question_list[q].id;
-                                qName = question_list[q].name;
-                                const answerList = await answers(qId);
-                                data = {id: qId, name: qName, answers: answerList[0]}
-				dataQuestion.push(data);
-                        }
+		exam_new(res, materiId);
+		// const ex = await exam(materiId);
+		// console.log(ex);
+		// if(ex.length > 0){
+		// 	examId = ex[0].id;
+		// 	const question_list = await question(examId);
+          //               dataQuestion = []
+          //               for (var q=0; q<question_list.length; q++){
+          //                       qId = question_list[q].id;
+          //                       qName = question_list[q].name;
+          //                       const answerList = await answers(qId);
+          //                       data = {id: qId, name: qName, answers: answerList[0]}
+		// 		dataQuestion.push(data);
+          //               }
 
-       			res.status(200).json({code: "9200", result: dataQuestion});
+       	// 		res.status(200).json({code: "9200", result: dataQuestion});
 
-		}
+		// }
 	})();
 
 }

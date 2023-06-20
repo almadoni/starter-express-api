@@ -2,7 +2,8 @@ var XLSX = require('xlsx')
 
 const express = require('express');
 // const pool = require('./connection').pool;
-const pool = require("../db_config");
+// const pool = require("../db_config");
+const pool = require("./connection_mysql");
 
 
 
@@ -30,7 +31,7 @@ router.get('/initdata', (req, res) =>{
 function findAccounts(fullname,address,email){
     return new Promise(resolve => {
         var query = "SELECT * FROM accounts where fullname = $1 or email = $2";
-        pool.run(query, [fullname,email], function (error, results){             
+        pool.query(query, [fullname,email], function (error, results){             
             if(error){
                 console.log(error)
             } else{
@@ -41,8 +42,33 @@ function findAccounts(fullname,address,email){
 }
 
 async function saveQuestion(examId, name){
-	const sql = 'insert into question (exam_id, name, create_by) values($1, $2, 1) returning id'; 
-	return pool.run(sql, [examId, name]);
+	const sql = 'insert into question (exam_id, name, create_by) values('+examId+', "'+name+'", 1)'; 
+	return pool.query(sql);
+}
+
+async function saveQuestion_new(examId, name, optionA, option1, option2, option3, option4, option5){
+	const sql = 'insert into question (exam_id, name, create_by) values('+examId+', "'+name+'", 1)'; 
+	pool.query(sql, async function(err, rows, field){
+		var lastId = rows.insertId;
+		console.log("last Id : "+lastId);
+
+
+		var questionId = lastId;
+			var numA = 0;
+			if(optionA == 'A')
+				numA = 1;
+			else if(optionA == 'B')
+				numA = 2;
+			else if (optionA == 'C')
+				numA = 3;
+			else if (optionA == 'D')
+				numA= 4;
+			else if (optionA == 'E')
+				numA = 5;
+			const inputAnsw = await saveAnswer(questionId, option1, option2, option3, option4, option5, numA);
+
+
+	});
 }
 
 async function saveQuestion2(examId, name){
@@ -53,7 +79,7 @@ async function saveQuestion2(examId, name){
 async function questionLastId(examId, name){
 	var q = await saveQuestion2(examId, name);
 	var ids = 0;
-	var id = await q.run(examId, name, function(err){
+	var id = await q.query(examId, name, function(err){
 		console.log("last id : "+this.lastID);
 		ids = this.lastID;
 	})
@@ -66,7 +92,7 @@ async function questionLastId(examId, name){
 async function questionLastId2(examId, name, num, optionA, option1, option2, option3, option4, option5){
 	var q = await saveQuestion2(examId, name);
 	
-	await q.run(examId, name, async function(err){
+	await q.query(examId, name, async function(err){
 		console.log("last id : "+this.lastID);
 
 		var lastId = this.lastID;
@@ -102,8 +128,12 @@ async function currId(examId, name){
 }
 
 async function saveAnswer(questionId, option1, option2, option3, option4, option5, answer){
-	const sql = 'insert into answer (question_id, option1, option2, option3, option4, option5, option_answer) values ($1, $2, $3, $4, $5, $6, $7)';
-	return pool.run(sql, [questionId, option1, option2, option3, option4, option5, answer])
+	// const sql = 'insert into answer (question_id, option1, option2, option3, option4, option5, option_answer) values ($1, $2, $3, $4, $5, $6, $7)';
+	// return pool.query(sql, [questionId, option1, option2, option3, option4, option5, answer])
+
+	const sql = 'insert into answer (question_id, option1, option2, option3, option4, option5, option_answer) values ('+questionId+', "'+option1+'", "'+option2+'", "'+option3+'", "'+option4+'", "'+option5+'", "'+answer+'")';
+	return pool.query(sql)
+
 }
 
 const prosesData = async (xlData) => { 
@@ -125,32 +155,31 @@ const prosesData = async (xlData) => {
 		optionA = row["jawaban benar"]
 		if(materi_no != undefined && materi_no != 'NAMA'){
 			console.log(id+ "init..."+materi_no+" ---" + nama_kuis+"--"+question_name+"--"+option1+"--"+option2);
-			const input = await saveQuestion2(materi_no, question_name);
+			// const input = await saveQuestion(materi_no, question_name);
+ 
+			const input = await saveQuestion_new(materi_no, question_name, optionA, option1, option2, option3, option4, option5);
 
 			// await questionLastId2(materi_no, question_name, num, optionA, option1, option2, option3, option4, option5);
  
- 			var lastId = await questionLastId(materi_no, question_name);
+ 			// var lastId = input.insertId; //await questionLastId(materi_no, question_name);
 			 
-			console.log("num "+num);
+			// console.log("num "+num);
  
-			console.log("last ID : "+lastId);
-			// var currentId = await currId(materi_no, question_name);
+			// console.log("last ID : "+lastId); 
 
-			// console.log(" curr id real : "+currentId);
-
-			var questionId = num;
-			var numA = 0;
-			if(optionA == 'A')
-				numA = 1;
-			else if(optionA == 'B')
-				numA = 2;
-			else if (optionA == 'C')
-				numA = 3;
-			else if (optionA == 'D')
-				numA= 4;
-			else if (optionA == 'E')
-				numA = 5;
-			const inputAnsw = await saveAnswer(questionId, option1, option2, option3, option4, option5, numA);
+			// var questionId = num;
+			// var numA = 0;
+			// if(optionA == 'A')
+			// 	numA = 1;
+			// else if(optionA == 'B')
+			// 	numA = 2;
+			// else if (optionA == 'C')
+			// 	numA = 3;
+			// else if (optionA == 'D')
+			// 	numA= 4;
+			// else if (optionA == 'E')
+			// 	numA = 5;
+			// const inputAnsw = await saveAnswer(questionId, option1, option2, option3, option4, option5, numA);
 			// if (num == 3) break;
 		}  
 	} 

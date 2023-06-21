@@ -21,7 +21,7 @@ async function resultWithId(sql){
         console.log(error)
         return [];
     } finally {
-        // pool.end();
+        pool.end();
     }
 }
 
@@ -40,7 +40,7 @@ async function resultArray(sql){
         console.log(error)
         return [];
     } finally {
-        // pool.end();
+        pool.end();
     }
 }
 

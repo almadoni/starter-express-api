@@ -226,7 +226,7 @@ const getScore = (req, res) =>{
 
 		jsonRst = {code: "9200", result:""}
 
-		const ex = await exam(examId);
+		const ex = await exam_new2(examId);
 		var currExamId = ex[0].id;
 
 		const totalQuestion = await getTotalQuestion(currExamId);

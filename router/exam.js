@@ -56,6 +56,37 @@ async function exam_old(materiId){
 	return pool.query(sql);
 }
 
+const util = require('util');
+
+async function exam_new2(materiId){ 
+	console.log("exam_new2...."+materiId);
+
+	const sql = 'select b.* from materi a left join exam b on (a.id = b.materi_id) where a.id = '+materiId; 
+ 
+    return resultArray(sql); 
+}
+
+async function resultArray(sql){
+	var ArrBuyPrice = []
+
+    const query = util.promisify(pool.query).bind(pool);
+
+    try {
+        const rows = await query(sql);
+        for (var i in rows) {
+            ArrBuyPrice.push(rows[i])
+        }
+        return ArrBuyPrice;
+    } catch (error) {
+        console.log(error)
+        return [];
+    } finally {
+        pool.end();
+    }
+}
+
+
+
 async function exam(materiId){
 	//const sql = 'select * from exam a left join materi b on (a.materi_id = b.id) where b.id = $1';
 	// const sql = 'select b.* from materi a left join exam b on (a.id = b.materi_id) where a.id = '+materiId;
@@ -98,53 +129,63 @@ function exam_new(res, materiId){
 
 async function getPoin(userId, examId, trxExam){
 	const sql = 'select * from poin_exam where user_id = '+userId+' and exam_id = '+examId+' and transaction_number = '+trxExam+' and status = 0';
-	return pool.query(sql);
+	// return pool.query(sql);
+	return resultArray(sql);
 }
+ 
 
 async function getPoinExam(examId, answerId, trxExam){
 	//const sql = 'select * from poin_exam where exam_id = $1 and answer_id = $2';
-	const sql = 'select a.* from poin_exam_detail a left join poin_exam b on (a.poin_exam_id = b.id) where a.poin_exam_id = $1 and b.status = 0 and a.answer_id = $2 and b.transaction_number = $3';
+	const sql = 'select a.* from poin_exam_detail a left join poin_exam b on (a.poin_exam_id = b.id) where a.poin_exam_id = '+examId+' and b.status = 0 and a.answer_id = '+answerId+' and b.transaction_number = '+trxExam;
 	console.log("param examId :"+examId+" answerId:"+answerId+" trxExam"+trxExam);
 	console.log("sql getPoinExam "+sql);
 
-	return pool.query(sql,[examId, answerId, trxExam]);
+	// return pool.query(sql,[examId, answerId, trxExam]);
+	return resultArray(sql);
 }
 
 async function setPoinExam(userId, examId, trxExam){	
-	const sql = 'INSERT into poin_exam (user_id, exam_id, score, status, transaction_number) values($1, $2, 0, 0,$3) returning id';
-	return pool.query(sql, [userId, examId, trxExam]);
+	const sql = 'INSERT into poin_exam (user_id, exam_id, score, status, transaction_number) values('+userId+', '+examId+', 0, 0,"'+trxExam+'") returning id';
+	// return pool.query(sql, [userId, examId, trxExam]);
+	return resultArray(sql);
 }
 
 async function setPoinExamDetail(examId, answerId, answerOptionId, isTrue){
-	const sql = 'INSERT into poin_exam_detail (poin_exam_id, answer_id, answer, istrue) values ($1, $2, $3, $4)';
-	return pool.query(sql,[examId, answerId, answerOptionId, isTrue]);
+	const sql = 'INSERT into poin_exam_detail (poin_exam_id, answer_id, answer, istrue) values ('+examId+', '+answerId+', '+answerOptionId+', '+isTrue+')';
+	// return pool.query(sql,[examId, answerId, answerOptionId, isTrue]);
+	return resultArray(sql);
 }
 
 async function getAnswer(id){
-	const sql = 'select option_answer from answer where id = $1';
-	return pool.query(sql,[id]);
+	const sql = 'select option_answer from answer where id = '+id;
+	// return pool.query(sql,[id]);
+	return resultArray(sql);
 }
 
 async function updatePoinExamDetail(poinExamId, answerId, isTrue, answer){
-	const sql = 'update poin_exam_detail set answer = $3, istrue = $4 where poin_exam_id = $1 and answer_id = $2';
-	return pool.query(sql,[poinExamId, answerId, answer, isTrue]);
+	const sql = 'update poin_exam_detail set answer = '+answer+', istrue = '+isTrue+' where poin_exam_id = '+poinExamId+' and answer_id = '+answerId;
+	// return pool.query(sql,[poinExamId, answerId, answer, isTrue]);
+	return resultArray(sql);
 }
 
 async function updatePoinExamScore(userId, examId, score, trxExam){
-	const sql = 'update poin_exam set score = $1, status=1 where transaction_number = $2'; 
-       	return pool.query(sql, [score, trxExam]);
+	const sql = 'update poin_exam set score = '+score+', status=1 where transaction_number = '+trxExam; 
+       	// return pool.query(sql, [score, trxExam]);
+	return resultArray(sql);
 }
 
 async function getTotalQuestion(examId){
 	console.log("examId : "+examId);
-	const sql = 'select count(*) as total from question where exam_id = $1';
-	return pool.query(sql, [examId]);
+	const sql = 'select count(*) as total from question where exam_id = '+examId;
+	// return pool.query(sql, [examId]);
+	return resultArray(sql);
 }
 
 async function getTotalAnswerExam(trxExam, examId, userId){
-	const sql = "select count(a.*) as total from poin_exam_detail a left join poin_exam b on (a.poin_exam_id = b.id)  where b.exam_id = $1 and b.user_id = $2 and b.transaction_number =$3 and a.istrue and b.status = 0";
+	const sql = "select count(a.*) as total from poin_exam_detail a left join poin_exam b on (a.poin_exam_id = b.id)  where b.exam_id = "+examId+" and b.user_id = "+userId+" and b.transaction_number ="+trxExam+" and a.istrue and b.status = 0";
 	console.log(sql);
-	return pool.query(sql, [examId, userId, trxExam]);
+	// return pool.query(sql, [examId, userId, trxExam]);
+	return resultArray(sql);
 }
 
 const getScore = (req, res) =>{
@@ -223,7 +264,9 @@ const savePoinExam = (req, res) =>{
 
 		jsonRst = {code: "9200", result: ""};
 
-		const ex = await exam(examId);
+		const ex = await exam_new2(examId);
+ 
+		// const ex = await exam(examId);
 		var currExamId = ex[0].id;
 		console.log("curr examId : "+ currExamId);
 

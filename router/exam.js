@@ -74,6 +74,7 @@ async function resultArray(sql){
     try {
         const rows = await query(sql);
         for (var i in rows) {
+        	  console.log("isi : "+rows[i]);
             ArrBuyPrice.push(rows[i])
         }
         return ArrBuyPrice;

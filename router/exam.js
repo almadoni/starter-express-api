@@ -211,7 +211,7 @@ async function getTotalQuestion(examId){
 }
 
 async function getTotalAnswerExam(trxExam, examId, userId){
-	const sql = "select count(a.*) as total from poin_exam_detail a left join poin_exam b on (a.poin_exam_id = b.id)  where b.exam_id = "+examId+" and b.user_id = "+userId+" and b.transaction_number ="+trxExam+" and a.istrue and b.status = 0";
+	const sql = "select count(a.*) as total from poin_exam_detail a left join poin_exam b on (a.poin_exam_id = b.id)  where b.exam_id = "+examId+" and b.user_id = "+userId+" and b.transaction_number ='"+trxExam+"' and a.istrue and b.status = 0";
 	console.log(sql);
 	// return pool.query(sql, [examId, userId, trxExam]);
 	return resultArray(sql);
@@ -288,15 +288,12 @@ const savePoinExam = (req, res) =>{
 		console.log(p);
 		
 		var isiPoin = p.length;
-                console.log("total isi "+isiPoin);
+          console.log("total isi "+isiPoin);
 		
 		if(isiPoin == 0){
 		    //todo insert poin exam and poin exam detail
 		    console.log("1. start save poin...");
 		    const insertPoin = await setPoinExam(userId, currExamId, trxExam);
-
-		    console.log("insert poin : ");
-		    console.log(insertPoin);
 		    const idInsetPoinExam = insertPoin;
 		    console.log("response id : " + idInsetPoinExam);
 		    

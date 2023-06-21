@@ -287,7 +287,8 @@ const savePoinExam = (req, res) =>{
 		    console.log("1. start save poin...");
 		    const insertPoin = await setPoinExam(userId, currExamId, trxExam);
 
-		    console.log("insert poin : "+insertPoin);
+		    console.log("insert poin : ");
+		    console.log(insertPoin);
 			
 		    const answer = await getAnswer(answerId); //harus check query
                         var isAnswerTrue = false;

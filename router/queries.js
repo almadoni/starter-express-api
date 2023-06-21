@@ -103,16 +103,38 @@ const register = (req, res) =>{
 		console.log(req.body);
 		const {username, password, fullname, email, nomahasiswa} = req.body;
 		const doRegister = await saveRegister(username, password, fullname, email, nomahasiswa);
-		var id = doRegister.rows[0].id;
+		var id = doRegister.insertId;
 		console.log("id input accounts "+id);
 		const dosave = await saveMateri(1, id);
 		res.status(200).json({code: "9200", result: "OK"});
 	})();
 }
 
+const util = require('util');
+
+async function resultWithId(sql){
+	var ArrBuyPrice = []
+	var idResult;
+
+    const query = util.promisify(pool.query).bind(pool);
+
+    try {
+        const rows = await query(sql);         
+        console.log("get response id");
+        console.log(rows);
+        return rows.insertId;
+    } catch (error) {
+        console.log(error)
+        return [];
+    } finally {
+        // pool.end();
+    }
+}
+
 async function saveRegister(username, password, fullname, email, nomahasiswa){
-	const sql = "INSERT INTO accounts (username, password, fullname, email, mahasiswa_id) values ($1, $2, $3, $4, $5) returning id";
-	return pool.query(sql, [username, password, fullname, email, nomahasiswa]);
+	const sql = "INSERT INTO accounts (username, password, fullname, email, mahasiswa_id) values ('"+username+"', '"+password+"', '"+fullname+"', '"+email+"', "+nomahasiswa+")";
+	// return pool.query(sql, [username, password, fullname, email, nomahasiswa]);
+	return resultWithId(sql);
 }
 
 async function saveMateri(materiId, accountId){

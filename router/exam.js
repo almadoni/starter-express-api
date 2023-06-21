@@ -292,7 +292,7 @@ const savePoinExam = (req, res) =>{
                              console.log("jawaban "+answerOption);
                              isAnswerTrue = answer[0].option_answer == answerOption;
                         }
-		    const idInsetPoinExam = insertPoin[0].id
+		    const idInsetPoinExam = insertPoin[0].insertId;
 
 		    console.log("2. start save poin detail... with id : "+ idInsetPoinExam)	
 		    const insertPoinExamDetail = await setPoinExamDetail(idInsetPoinExam, answerId, answerOption, isAnswerTrue);

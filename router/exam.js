@@ -87,6 +87,30 @@ async function resultArray(sql){
     }
 }
 
+async function resultWithId(sql){
+	var ArrBuyPrice = []
+	var idResult;
+
+    const query = util.promisify(pool.query).bind(pool);
+
+    try {
+        const rows = await query(sql);
+        // for (var i in rows) {
+        // 	  console.log("isi : ");
+        // 	  console.log(rows[i]);
+        //     ArrBuyPrice.push(rows[i])
+        // }
+        console.log("get response id");
+        console.log(rows);
+        return rows.insertId;
+    } catch (error) {
+        console.log(error)
+        return [];
+    } finally {
+        // pool.end();
+    }
+}
+
 
 
 async function exam(materiId){
@@ -151,7 +175,8 @@ async function setPoinExam(userId, examId, trxExam){
 	// const sql = 'INSERT into poin_exam (user_id, exam_id, score, status, transaction_number) values('+userId+', '+examId+', 0, 0,"'+trxExam+'") returning id';
 	const sql = 'INSERT into poin_exam (user_id, exam_id, score, status, transaction_number) values('+userId+', '+examId+', 0, 0,"'+trxExam+'")';
 	// return pool.query(sql, [userId, examId, trxExam]);
-	return resultArray(sql);
+	// return resultArray(sql);
+	return resultWithId(sql);
 }
 
 async function setPoinExamDetail(examId, answerId, answerOptionId, isTrue){
@@ -237,24 +262,7 @@ const getExam = (req, res) =>{
 	(async ()=>{
 		materiId = req.params.materiId;
 		console.log("getExam with materi id "+materiId);
-		exam_new(res, materiId);
-		// const ex = await exam(materiId);
-		// console.log(ex);
-		// if(ex.length > 0){
-		// 	examId = ex[0].id;
-		// 	const question_list = await question(examId);
-          //               dataQuestion = []
-          //               for (var q=0; q<question_list.length; q++){
-          //                       qId = question_list[q].id;
-          //                       qName = question_list[q].name;
-          //                       const answerList = await answers(qId);
-          //                       data = {id: qId, name: qName, answers: answerList[0]}
-		// 		dataQuestion.push(data);
-          //               }
-
-       	// 		res.status(200).json({code: "9200", result: dataQuestion});
-
-		// }
+		exam_new(res, materiId); 
 	})();
 
 }
@@ -289,24 +297,24 @@ const savePoinExam = (req, res) =>{
 
 		    console.log("insert poin : ");
 		    console.log(insertPoin);
-			
+		    const idInsetPoinExam = insertPoin;
+		    console.log("response id : " + idInsetPoinExam);
+		    
 		    const answer = await getAnswer(answerId); //harus check query
                         var isAnswerTrue = false;
                         if(answer.length > 0){
                              console.log("open answer"+ answer[0].option_answer);
                              console.log("jawaban "+answerOption);
                              isAnswerTrue = answer[0].option_answer == answerOption;
-                        }
-		    const idInsetPoinExam = insertPoin[0].option_answer;
+                        } 
 
 		    console.log("2. start save poin detail... with id : "+ idInsetPoinExam)	
 		    const insertPoinExamDetail = await setPoinExamDetail(idInsetPoinExam, answerId, answerOption, isAnswerTrue);
-                    console.log(insertPoinExamDetail);
-	
-		    console.log("response id ---- : "+insertPoin[0]);
-		    console.log("response id : " + insertPoin[0].insertId);
+              console.log(insertPoinExamDetail);
+	 
+		    
 		    jsonRst.code = "9200";
-		    jsonRst.result = insertPoin[0].insertId;
+		    jsonRst.result = idInsetPoinExam;
 		}else{
 		    console.log("3. lanjut kan update poin detail");	
 		    console.log("update id "+p[0].id);

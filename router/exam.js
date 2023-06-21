@@ -211,7 +211,7 @@ async function getTotalQuestion(examId){
 }
 
 async function getTotalAnswerExam(trxExam, examId, userId){
-	const sql = "select count(a.*) as total from poin_exam_detail a left join poin_exam b on (a.poin_exam_id = b.id)  where b.exam_id = "+examId+" and b.user_id = "+userId+" and b.transaction_number ='"+trxExam+"' and a.istrue and b.status = 0";
+	const sql = "select count(*) as total from poin_exam_detail a left join poin_exam b on (a.poin_exam_id = b.id)  where b.exam_id = "+examId+" and b.user_id = "+userId+" and b.transaction_number ='"+trxExam+"' and a.istrue and b.status = 0";
 	console.log(sql);
 	// return pool.query(sql, [examId, userId, trxExam]);
 	return resultArray(sql);

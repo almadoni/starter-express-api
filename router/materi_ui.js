@@ -48,7 +48,7 @@ router.get('/list_materi_assign/:materiId', (req, res) =>{
 
 const getUsers = (req, res) => {
 
-        pool.run('select * from accounts', (error, results) =>{
+        pool.query('select * from accounts', (error, results) =>{
           if(error){
              throw error
           }
@@ -60,7 +60,7 @@ const getUsers = (req, res) => {
 
 const createUser = (req, res) =>{
 	const {username, password, fullname, email, mhs_id, fcm_id} = req.body;
-	pool.run("INSERT INTO accounts (username, password, fullname, email, mahasiswa_id, firebase_id) values ($1, $2, $3, $4, $5, $6)",
+	pool.query("INSERT INTO accounts (username, password, fullname, email, mahasiswa_id, firebase_id) values ($1, $2, $3, $4, $5, $6)",
 		[username, password, fullname, email, mhs_id, fcm_id], (error, results) =>{
 		if(error){
 		   throw error
@@ -72,7 +72,7 @@ const createUser = (req, res) =>{
 const register = (req, res) =>{
 	console.log(req.body);
         const {username, password, fullname, email, nomahasiswa} = req.body;
-        pool.run("INSERT INTO accounts (username, password, fullname, email, mahasiswa_id) values ($1, $2, $3, $4, $5)",
+        pool.query("INSERT INTO accounts (username, password, fullname, email, mahasiswa_id) values ($1, $2, $3, $4, $5)",
                 [username, password, fullname, email, nomahasiswa], (error, results) =>{
                 if(error){
 		   res.status(200).json({code: "9999", result: error});	
@@ -87,7 +87,7 @@ const updateUser = (req, res) =>{
 	const id = req.params.id;
 	const fcm_id = req.params.fcmid;
 
-	pool.run("UPDATE accounts set firebase_id =$1 WHERE id = $2", [id, fcm_id], (error, results) =>{
+	pool.query("UPDATE accounts set firebase_id =$1 WHERE id = $2", [id, fcm_id], (error, results) =>{
 		if(error){
 		   throw error
 		}

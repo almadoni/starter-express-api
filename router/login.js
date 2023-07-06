@@ -76,6 +76,17 @@ router.get('/login', (reg, res) =>{
     layout: 'login' 
   });
 });
+
+
+router.get('/privacy_policy', (reg, res) =>{
+  console.log("date : "+ new Date())
+ 
+  console.log('privacy_policy...');
+  reg.session.loggedin = false; 
+  res.render('privacy', {
+    layout: 'privacy' 
+  });
+});
   
 
 router.get('/logout', (reg, res) =>{

@@ -32,6 +32,9 @@ const session = require('express-session');
 
 const {engine} = require('express-handlebars');
 
+
+
+
 app.set('view engine', 'hbs');
 app.engine('hbs', engine({
     layoutsDir: __dirname + '/views',
@@ -39,6 +42,18 @@ app.engine('hbs', engine({
     defaultLayout: 'planB',
     partialsDir: __dirname + '/views/partials/'
 }));
+
+hbs.registerHelper('ifeq', function (a, b, options) {
+    if (a == b) { return options.fn(this); }
+    return options.inverse(this);
+});
+
+// hbs.registerHelper('eq', function () {
+//     const args = Array.prototype.slice.call(arguments, 0, -1);
+//     return args.every(function (expression) {
+//         return args[0] === expression;
+//     });
+// });
 
 app.use(session({
   secret: 'secret', //plaese change session id
